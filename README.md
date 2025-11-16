@@ -1,4 +1,4 @@
-# 1. Clone the project
+# 1. Clone the project for front end code
 git clone https://github.com/mtejas309/EduZap.git
 
 # 2. Open the project folder
