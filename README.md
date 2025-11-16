@@ -1,18 +1,86 @@
-# React + Vite
+## **1. Handling 100,000+ Requests Efficiently with a Database**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+When scaling to 100k+ requests, the main challenge is reducing database bottlenecks. Efficient handling requires a combination of server scaling and database optimization:
 
-Currently, two official plugins are available:
+### **• Horizontal Scaling**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Run multiple Node.js instances behind a load balancer so incoming requests are distributed across all CPU cores. This increases concurrency and helps the system handle high RPS.
 
-## React Compiler
+### **• Database Connection Pooling**
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+Instead of opening a new DB connection for each request, use a pooled set of persistent connections. This reduces latency and allows the server to process thousands of database operations concurrently.
 
-Note: This will impact Vite dev & build performances.
+### **• Proper Indexing**
 
-## Expanding the ESLint configuration
+Indexes prevent full-collection scans and ensure queries on fields like email, userId, or timestamps execute in milliseconds. Indexing is essential when handling large request volumes.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+
+## **2. Choosing the Right Data Structures**
+
+### **Fast Insertion and Fast Search → Hash Table**
+
+Hash Tables provide average O(1) insertion and search, making them ideal for:
+
+* Caching
+* Session management
+* Quick key–value lookups
+
+
+
+### **Efficient Sorted Retrieval → B-Tree / B+Tree**
+
+B-Trees and B+Trees provide O(log N) search and maintain data in sorted order. They power:
+
+* Database indexes
+* Range queries (>, <, between)
+* Sorted lists and pagination
+
+MongoDB, MySQL, and most databases rely on B-Tree-based index structures.
+
+
+
+## **3. Real-Time Updates Using Socket.IO**
+
+Real-time updates require a persistent, event-driven communication layer between client and server.
+
+### **• Persistent WebSocket Connection**
+
+Socket.IO maintains an always-open channel so the server can push updates instantly without polling.
+
+### **• Rooms/Channels for Targeted Communication**
+
+Users or data groups subscribe to specific channels. Only relevant clients receive updates, improving efficiency.
+
+### **• Event-Based Architecture**
+
+The server emits events (e.g., `messageReceived`, `orderUpdated`) and clients update their UI immediately.
+
+### **• Database Change Streams (MongoDB)**
+
+MongoDB can emit events when data changes. These events can be forwarded to connected clients through Socket.IO for real-time synchronization.
+
+
+## **4. Best Cache Algorithm for Frequently Requested Data**
+
+### **Use LRU (Least Recently Used)**
+
+LRU is the most effective caching algorithm for modern web systems because:
+
+### **• Matches Real User Behavior**
+
+Most frequently accessed data is reused within short intervals. LRU keeps this "hot" data in memory.
+
+### **• Predictable Memory Usage**
+
+LRU evicts the least recently accessed items, keeping cache size fixed and efficient.
+
+### **• Industry Standard**
+
+Redis, browsers, and CDNs use LRU internally, proving its reliability.
+
+### **• Prevents Cache Pollution**
+
+Rarely accessed or one-time-use data gets removed automatically.
+
+
