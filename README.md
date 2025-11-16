@@ -1,8 +1,8 @@
 # 1. Clone the project
-git clone <your-frontend-repo-url>
+git clone https://github.com/mtejas309/EduZap.git
 
 # 2. Open the project folder
-cd <project-folder>
+cd EduZap
 
 # 3. Install all dependencies
 npm install
