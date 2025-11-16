@@ -1,3 +1,19 @@
+# 1. Clone the project
+git clone <your-frontend-repo-url>
+
+# 2. Open the project folder
+cd <project-folder>
+
+# 3. Install all dependencies
+npm install
+
+# 4. Start the frontend
+npm run dev
+
+# 5. Open in browser
+# Visit: http://localhost:5173
+
+
 ## **1. Handling 100,000+ Requests Efficiently with a Database**
 
 When scaling to 100k+ requests, the main challenge is reducing database bottlenecks. Efficient handling requires a combination of server scaling and database optimization:
